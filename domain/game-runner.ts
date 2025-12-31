@@ -22,10 +22,10 @@ const gamePrompter = {
         }
         return numberPrompt;
     },
-    async promptAnswer(lowerBound: number = 0, upperBound: number = 8, queryName: string = `players`) {
+    async promptAnswer(lowerBound: number = 0, upperBound: number = 8, queryName: string = `answers`) {
         let numberPrompt: number = NaN;
         while (isNaN(numberPrompt) || numberPrompt < lowerBound || numberPrompt > upperBound) {
-            numberPrompt = await prompt(`How many ${queryName}s in the game? Up to ${upperBound} ${queryName}s supported: `) as number;
+            numberPrompt = await prompt(`Which ${queryName}s do you pick? from ${lowerBound} to ${upperBound} supported: `) as number;
         }
         return numberPrompt;
     }
@@ -57,8 +57,7 @@ export class GameRunner {
         do {
             // checking to determine if they should or should not be removed from penalty box, more than just a bool check
             if (!game.checkPenaltyBox(Math.floor(Math.random() * 10))) {
-                // asking the question, and then also determining if they answered correctly or not
-                // also violates SRP
+                // asking the question, and then also determining if they answered correctly or not; also violates SRP
                 game.askQuestion();
 
                 const answerIdx = await runner.promptAnswer(0, 4, "answer");
@@ -79,6 +78,7 @@ export class GameRunner {
                 game.rotatePlayer()
             }
         } while (!winner);
+        return;
     }
 }
 
