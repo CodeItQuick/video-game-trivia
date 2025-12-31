@@ -7,7 +7,7 @@ function init() {
         logger: true
     })
     fastify.register(cors, {
-        origin: "http://localhost:5173"
+        origin: "https://video-game-trivia-codeitquicks-projects.vercel.app/"
     })
 
     let gameRunner, game, winner = false, running;
