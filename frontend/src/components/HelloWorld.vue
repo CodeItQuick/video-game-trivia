@@ -9,7 +9,7 @@ const playersAdded = ref(false);
 const gameOver = ref(false);
 
 const requestNewInstance = async () => {
-  const gameInstanceResponse = await fetch("http://localhost:3000/").then(x => x.json())
+  const gameInstanceResponse = await fetch("/api/").then(x => x.json())
   playersAdded.value = false;
   gameOver.value = false;
   console.log(gameInstanceResponse)
@@ -17,12 +17,12 @@ const requestNewInstance = async () => {
 }
 
 const addPlayers = async () => {
-  const playersAddedResponse = await fetch("http://localhost:3000/create-new-game").then(x => x.json())
+  const playersAddedResponse = await fetch("/api/create-new-game").then(x => x.json())
   console.log(playersAddedResponse)
   playersAdded.value =  playersAddedResponse?.newGameCreated || false;
 }
 const takeTurn = async () => {
-  const turnTakenResponse = await fetch("http://localhost:3000/take-turn-in").then(x => x.json())
+  const turnTakenResponse = await fetch("/api/take-turn-in").then(x => x.json())
   console.log(turnTakenResponse)
   gameOver.value =  turnTakenResponse?.gameOver || false;
 }
