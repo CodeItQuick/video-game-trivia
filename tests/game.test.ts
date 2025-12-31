@@ -1,0 +1,229 @@
+import {describe, expect, it} from 'vitest';
+import {GameRunner} from '../domain/game-runner';
+import {Game} from "../domain/game";
+import {ConsoleWrapper} from "../domain/consoleWrapper";
+
+const FakeCommandPrompter = () => ({
+    commands: [2],
+    async promptNumber(_lowerBound: number, _upperBound: number, _queryName: string){
+      return this.commands.shift() || 1;
+    }
+});
+
+const nameRetrievePrompter = () => ({
+    commands: [] as string[],
+    async playerNamesPrompter(_numberOfPlayers: number){
+        return this.commands;
+    }
+});
+const runner = {
+    names: [] as string[],
+    numPlayers: [] as number[],
+    answers: [] as number[],
+    promptNames(_numberOfPlayers: number){
+        return this.names;
+    },
+    promptNumber(_lowerBound: number, _upperBound: number, _queryName: string){
+        return this.numPlayers.shift() || 1;
+    },
+    promptAnswer(_lowerBound: number, _upperBound: number, _queryName: string){
+        return this.answers.shift() || 3;
+    }
+};
+
+describe('The test environment', () => {
+    it('should pass', () => {
+        expect(true).to.be.true;
+    });
+
+    it("should access game", function () {
+        expect(GameRunner).to.not.be.undefined;
+    });
+
+    it("should run a successful game", async () => {
+        const consoleWrapper = new ConsoleWrapper()
+        runner.names = ["Jeff", "Evan", "Chet"]
+        runner.numPlayers = [3];
+        runner.answers = [4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
+
+
+        await GameRunner.main(consoleWrapper, runner);
+
+        const messages = consoleWrapper.getMessages()
+        expect(consoleWrapper.getMessages()[messages.length - 1]).to.include("now has 6 Gold Coins.")
+    })
+
+    it('when player added game should record player number', () => {
+        const consoleWrapper = new ConsoleWrapper();
+        const game = new Game(consoleWrapper);
+
+        game.add("Chet");
+
+        expect(consoleWrapper.getMessages()[0]).to.be.eq("Chet was added");
+        expect(consoleWrapper.getMessages()[1]).to.be.eq("They are player number 1");
+    });
+
+    for (const rollNumber of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
+        const categories = ["Pop", "Science", "Sports", "Rock"]
+        it(`when one player game rolled a ${rollNumber} should return new location is ${rollNumber} with ${categories[rollNumber % 4]} Question`, () => {
+            const consoleWrapper = new ConsoleWrapper();
+            const game = new Game(consoleWrapper);
+            game.add("Chet")
+            game.checkPenaltyBox(rollNumber);
+            game.askQuestion()
+            game.correctAnswer();
+
+            game.movePlayer(rollNumber);
+
+            expect(consoleWrapper.getMessages()[0]).to.be.eq("Chet was added");
+            expect(consoleWrapper.getMessages()[1]).to.be.eq("They are player number 1");
+            expect(consoleWrapper.getMessages()[2]).to.be.eq("Chet is the current player");
+            expect(consoleWrapper.getMessages()[3]).to.be.eq(`The category is Pop`);
+            expect(consoleWrapper.getMessages()[4]).to.be.eq(`Pop Question 0`);
+            expect(consoleWrapper.getMessages()[5]).to.be.eq(`Answer was correct!!!!`);
+            expect(consoleWrapper.getMessages()[6]).to.be.eq(`Chet now has 1 Gold Coins.`);
+            expect(consoleWrapper.getMessages()[7]).to.be.eq(`They have rolled a ${rollNumber}`);
+            expect(consoleWrapper.getMessages()[8]).to.be.eq(`Chet's new location is ${rollNumber}`);
+        });
+    }
+
+    for (const rollNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
+        it(`when two player game rolled a ${rollNumber} should change player category give second player gold coins`, () => {
+            const consoleWrapper = new ConsoleWrapper();
+            const game = new Game(consoleWrapper);
+            game.add("Chet");
+            game.add("Pat");
+            game.checkPenaltyBox(rollNumber);
+            game.askQuestion();
+            game.correctAnswer();
+            game.currentPlayerWon();
+            game.rotatePlayer()
+            game.checkPenaltyBox(rollNumber);
+            game.askQuestion();
+
+            game.correctAnswer();
+
+            expect(consoleWrapper.getMessages()[9]).to.be.eq(`Pat is the current player`);
+            expect(consoleWrapper.getMessages()[10]).to.be.eq(`The category is Pop`);
+            expect(consoleWrapper.getMessages()[11]).to.be.eq(`Pop Question 1`);
+            expect(consoleWrapper.getMessages()[12]).to.be.eq("Answer was correct!!!!");
+            expect(consoleWrapper.getMessages()[13]).to.be.eq("Pat now has 1 Gold Coins.");
+        });
+    }
+
+    it('when one player game after game roll wrongAnswer should put player in jail and not move them', () => {
+        const consoleWrapper = new ConsoleWrapper();
+        const game = new Game(consoleWrapper);
+        game.add("Chet");
+        game.add("Pat");
+        game.checkPenaltyBox(1);
+        game.askQuestion();
+        game.wrongAnswer();
+        const winner = game.currentPlayerWon()
+
+        game.rotatePlayer();
+
+        expect(consoleWrapper.getMessages()[7]).to.be.eq("Question was incorrectly answered");
+        expect(consoleWrapper.getMessages()[8]).to.be.eq("Chet was sent to the penalty box");
+        expect(winner).to.eq(false);
+    });
+
+
+    it('when two player game after game roll wrongAnswer should put player in jail and not move them', () => {
+        const consoleWrapper = new ConsoleWrapper();
+        const game = new Game(consoleWrapper);
+        game.add("Chet")
+        game.add("Pat")
+        game.checkPenaltyBox(1);
+        game.askQuestion();
+        game.wrongAnswer();
+        game.currentPlayerWon();
+        game.rotatePlayer();
+        game.checkPenaltyBox(1);
+        game.askQuestion();
+        game.wrongAnswer();
+        const winner = game.currentPlayerWon()
+        game.rotatePlayer();
+
+        game.checkPenaltyBox(1);
+
+        expect(consoleWrapper.getMessages()[14]).to.be.eq("Chet is the current player");
+        expect(consoleWrapper.getMessages()[15]).to.be.eq("Chet is not getting out of the penalty box");
+        expect(winner).to.eq(false);
+    });
+
+    it('when one player game after game roll wasCorrectlyAnswered should give player Gold Coins', () => {
+        const consoleWrapper = new ConsoleWrapper();
+        const game = new Game(consoleWrapper);
+        game.add("Chet")
+        game.checkPenaltyBox(1);
+        game.askQuestion();
+        game.correctAnswer();
+
+        game.currentPlayerWon();
+
+        expect(consoleWrapper.getMessages()[5]).to.be.eq("Answer was correct!!!!");
+        expect(consoleWrapper.getMessages()[6]).to.be.eq("Chet now has 1 Gold Coins.");
+
+    });
+    it('when two player game after game roll wasCorrectlyAnswered should give player Gold Coins', () => {
+        const consoleWrapper = new ConsoleWrapper();
+        const game = new Game(consoleWrapper);
+        game.add("Chet")
+        game.add("Pat")
+        game.wrongAnswer();
+        game.rotatePlayer();
+
+        game.correctAnswer();
+        const winner = game.currentPlayerWon()
+
+        expect(consoleWrapper.getMessages()[6]).to.be.eq("Answer was correct!!!!");
+        expect(consoleWrapper.getMessages()[7]).to.be.eq("Pat now has 1 Gold Coins.");
+        expect(winner).to.eq(false);
+    });
+
+    it('when two player game after enough correct answers should end game', () => {
+        const consoleWrapper = new ConsoleWrapper();
+        const game = new Game(consoleWrapper);
+        game.add("Chet")
+        game.add("Pat")
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+        game.checkPenaltyBox(7);
+        game.correctAnswer();
+        game.rotatePlayer();
+
+        game.correctAnswer();
+        const winner = game.currentPlayerWon();
+
+        expect(winner).to.eq(true);
+    });
+});

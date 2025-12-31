@@ -1,0 +1,34 @@
+﻿import {Player} from "./player";
+
+/**
+ * Responsibility: Keeps track of current turn, and the player whose turn it is, and the number of players in game
+ */
+export class Turn {
+    private players: Array<Player> = new Array<Player>();
+    private currentPlayer: number = 0;
+
+    constructor() {
+    }
+
+    public addPlayer(name: string): void {
+        this.players.push(new Player(name))
+    }
+
+    public rotatePlayer(): void {
+        this.currentPlayer += 1;
+        if (this.currentPlayer == this.players.length) {
+            this.currentPlayer = 0;
+        }
+    }
+
+    // code smell: exposing the player object so that it can be interacted with directly.
+    // however, I wish there was a way to enforce the rule that only the public fields are allowed to be accessed.
+    // and I'm not sure about when these methods are accessed should that behaviour exist on player
+    public retrieveCurrentPlayer(): Player | undefined {
+        return this.players[this.currentPlayer];
+    }
+
+    public numberOfPlayers(): number {
+        return this.players.length;
+    }
+}
