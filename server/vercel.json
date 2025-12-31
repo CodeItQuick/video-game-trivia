@@ -1,0 +1,7 @@
+﻿{
+  "functions": {
+    "src/app.js": {
+      "includeFiles": "../domain/dist"
+    }
+  }
+}
