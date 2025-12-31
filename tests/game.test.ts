@@ -3,19 +3,6 @@ import {GameRunner} from '../domain/game-runner';
 import {Game} from "../domain/game";
 import {ConsoleWrapper} from "../domain/consoleWrapper";
 
-const FakeCommandPrompter = () => ({
-    commands: [2],
-    async promptNumber(_lowerBound: number, _upperBound: number, _queryName: string){
-      return this.commands.shift() || 1;
-    }
-});
-
-const nameRetrievePrompter = () => ({
-    commands: [] as string[],
-    async playerNamesPrompter(_numberOfPlayers: number){
-        return this.commands;
-    }
-});
 const runner = {
     names: [] as string[],
     numPlayers: [] as number[],
