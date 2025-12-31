@@ -1,6 +1,6 @@
 ﻿const Fastify = require('fastify');
 const cors = require('@fastify/cors');
-const {GameRunner} = require('../domain/dist/game-runner.js');
+const {GameRunner} = require('./domain/dist/game-runner.js');
 
 function init() {
     const fastify = Fastify({
