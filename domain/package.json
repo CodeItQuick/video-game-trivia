@@ -3,8 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "start": "ts-node --project tsconfig.runtime.json src/index.ts",
-    "test": "vitest"
+    "start": "ts-node --project tsconfig.json src/index.ts",
+    "test": "vitest",
+    "build": "tsc"
   },
   "dependencies": {
   },

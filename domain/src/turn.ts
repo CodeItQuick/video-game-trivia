@@ -1,4 +1,4 @@
-﻿import {Player} from "./player.ts";
+﻿import {Player} from "./player.js";
 
 /**
  * Responsibility: Keeps track of current turn, and the player whose turn it is, and the number of players in game

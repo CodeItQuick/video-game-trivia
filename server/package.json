@@ -1,0 +1,30 @@
+{
+  "name": "trivia-server",
+  "version": "1.0.0",
+  "description": "Trivia server application",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "vitest",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeItQuick/video-game-trivia.git"
+  },
+  "keywords": [
+    "trivia",
+    "video-game"
+  ],
+  "author": "Evan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CodeItQuick/video-game-trivia/issues"
+  },
+  "homepage": "https://github.com/CodeItQuick/video-game-trivia#readme",
+  "dependencies": {
+    "fastify": "^5.6.2"
+  },
+  "devDependencies": {
+  }
+}

@@ -1,7 +1,7 @@
-import {ConsoleWrapper} from "./consoleWrapper.ts";
-import {Turn} from "./turn.ts";
-import {Questioner} from "./questioner.ts";
-import {DisplayMessages} from "./displayMessages.ts";
+import {ConsoleWrapper} from "./consoleWrapper.js";
+import {Turn} from "./turn.js";
+import {Questioner} from "./questioner.js";
+import {DisplayMessages} from "./displayMessages.js";
 
 /**
  * Responsibility: Keeps track of the current game state

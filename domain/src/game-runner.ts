@@ -1,7 +1,7 @@
 import readline from 'node:readline';
 
-import {Game} from './game.ts';
-import {ConsoleWrapper} from "./consoleWrapper.ts";
+import {Game} from './game.js';
+import {ConsoleWrapper} from "./consoleWrapper.js";
 
 
 

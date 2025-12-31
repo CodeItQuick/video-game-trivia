@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
-import {GameRunner} from '../src/game-runner.ts';
-import {Game} from "../src/game.ts";
-import {ConsoleWrapper} from "../src/consoleWrapper.ts";
+import {GameRunner} from '../src/game-runner.js';
+import {Game} from "../src/game.js";
+import {ConsoleWrapper} from "../src/consoleWrapper.js";
 
 const runner = {
     names: [] as string[],
