@@ -8,7 +8,7 @@ const fastify = Fastify({
     logger: true
 })
 
-let gameRunner, game;
+let gameRunner, game, winner = false;
 const runner = {
     names: [],
     numPlayers: [],
@@ -29,7 +29,7 @@ fastify.get('/', async function (request, reply) {
 
 
     [gameRunner, game] = await GameRunner.main(console, runner);
-    reply.send({ hello: 'world' })
+    reply.send({ gameInstanceMade: !!(gameRunner && game) })
 })
 // Declare a route
 fastify.get('/create-new-game', async function (request, reply) {
@@ -37,14 +37,16 @@ fastify.get('/create-new-game', async function (request, reply) {
     runner.names = ["Jeff", "Evan", "Chet"]
     runner.numPlayers = [3];
 
-    await GameRunner.createNewGame(gameRunner, game);
-    reply.send({ hello: 'world' })
+    const gameCreated = await GameRunner.createNewGame(gameRunner, game);
+    reply.send({ newGameCreated: !!gameCreated })
 })
 // Declare a route
 fastify.get('/take-turn-in', async function (request, reply) {
     runner.answers = [3];
-    await GameRunner.takeTurnsIn(game, gameRunner);
-    reply.send({ hello: 'world' })
+    if (!winner) {
+        winner = await GameRunner.takeTurnsIn(game, gameRunner);
+    }
+    reply.send({ gameOver: winner })
 })
 
 // Run the server!

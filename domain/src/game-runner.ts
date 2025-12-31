@@ -68,6 +68,8 @@ export class GameRunner {
         for (const player of playerNames) {
             game.add(player);
         }
+
+        return true;
     }
 
     public static async takeTurnsIn(game: Game, runner: RunnerType) {
@@ -99,7 +101,9 @@ export class GameRunner {
             if (!winner) {
                 game.rotatePlayer()
             }
-        };
+        }
+
+        return winner;
     }
 }
 
