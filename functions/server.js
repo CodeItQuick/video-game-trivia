@@ -1,0 +1,1 @@
+﻿export { handler } from '../server/src/lambda.js'; // Change `lambda.js` path to your `lambda.js` path

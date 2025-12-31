@@ -2,11 +2,11 @@
   "name": "trivia-server",
   "version": "1.0.0",
   "description": "Trivia server application",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.ts",
   "scripts": {
     "test": "vitest",
-    "start": "node src/index.js"
+    "start": "node src/app.js"
   },
   "repository": {
     "type": "git",
