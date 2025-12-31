@@ -2,14 +2,19 @@
 
 // ESM
 import Fastify from 'fastify'
+import cors from '@fastify/cors'
 import { GameRunner } from '../../domain/dist/game-runner.js'
 
 const fastify = Fastify({
     logger: true
 })
 
-let gameRunner, game, winner = false;
-const runner = {
+await fastify.register(cors, {
+    origin: "http://localhost:5173"
+});
+
+let gameRunner, game, winner = false, running;
+const runner = () => ({
     names: [],
     numPlayers: [],
     answers: [],
@@ -22,27 +27,31 @@ const runner = {
     promptAnswer(_lowerBound, _upperBound, _queryName){
         return this.answers.shift();
     }
-};
+});
 
 // Declare a route
 fastify.get('/', async function (request, reply) {
 
 
-    [gameRunner, game] = await GameRunner.main(console, runner);
+    [gameRunner, game] = await GameRunner.main(console, runner());
+    gameRunner.names = [];
+    gameRunner.numPlayers = 0;
+    gameRunner.answers = [];
+    winner = false;
     reply.send({ gameInstanceMade: !!(gameRunner && game) })
 })
 // Declare a route
 fastify.get('/create-new-game', async function (request, reply) {
 
-    runner.names = ["Jeff", "Evan", "Chet"]
-    runner.numPlayers = [3];
+    gameRunner.names = ["Jeff", "Evan", "Chet"]
+    gameRunner.numPlayers = [3];
 
     const gameCreated = await GameRunner.createNewGame(gameRunner, game);
     reply.send({ newGameCreated: !!gameCreated })
 })
 // Declare a route
 fastify.get('/take-turn-in', async function (request, reply) {
-    runner.answers = [3];
+    gameRunner.answers = [3];
     if (!winner) {
         winner = await GameRunner.takeTurnsIn(game, gameRunner);
     }
