@@ -1,4 +1,4 @@
-﻿import {Question} from "./question";
+﻿import {Question} from "./question.ts";
 
 // entity, has behaviour
 export class Questioner {

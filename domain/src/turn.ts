@@ -1,4 +1,4 @@
-﻿import {Player} from "./player";
+﻿import {Player} from "./player.ts";
 
 /**
  * Responsibility: Keeps track of current turn, and the player whose turn it is, and the number of players in game
