@@ -1,3 +1,0 @@
-﻿[functions]
-    command = "npm run build:functions"
-    functions = "functions-build" # always appends `-build` folder to your `functions` folder for builds
