@@ -33,7 +33,6 @@ describe('The test environment', () => {
         runner.numPlayers = [3];
         runner.answers = [4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
 
-
         await GameRunner.main(consoleWrapper, runner);
 
         const messages = consoleWrapper.getMessages()
