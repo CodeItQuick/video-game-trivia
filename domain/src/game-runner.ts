@@ -4,7 +4,6 @@ import {Game} from './game.js';
 import {ConsoleWrapper} from "./consoleWrapper.js";
 
 
-
 const gamePrompter = {
     async promptNames(numberOfPlayers: number) {
         let playerNames: string[] = [];
@@ -32,6 +31,19 @@ const gamePrompter = {
 
 }
 
+type RunnerType = {
+    names: string[];
+    numPlayers: number[];
+    answers: number[];
+    promptNames(_numberOfPlayers: number): string[];
+    promptNumber(_lowerBound: number, _upperBound: number, _queryName: string): number;
+    promptAnswer(_lowerBound: number, _upperBound: number, _queryName: string): number
+} | {
+    promptNames(numberOfPlayers: number): Promise<string[]>;
+    promptNumber(lowerBound?: number, upperBound?: number, queryName?: string): Promise<number>;
+    promptAnswer(lowerBound?: number, upperBound?: number, queryName?: string): Promise<number>
+};
+
 export class GameRunner {
 
     public static async main(consoleWrapper: ConsoleWrapper | typeof console = console,
@@ -42,9 +54,13 @@ export class GameRunner {
                                  promptNames(_numberOfPlayers: number): string[];
                                  promptNumber(_lowerBound: number, _upperBound: number, _queryName: string): number;
                                  promptAnswer(_lowerBound: number, _upperBound: number, _queryName: string): number;
-                             } | typeof gamePrompter = gamePrompter ): Promise<void>{
+                             } | typeof gamePrompter = gamePrompter ): Promise<([RunnerType, Game])>{
         const game = new Game(consoleWrapper);
 
+        return [runner, game];
+    }
+
+    static async createNewGame(runner: RunnerType, game: Game) {
         let numberOfPlayers = await runner.promptNumber(0, 4, `player`);
 
         let playerNames = await runner.promptNames(numberOfPlayers);
@@ -52,15 +68,21 @@ export class GameRunner {
         for (const player of playerNames) {
             game.add(player);
         }
+    }
 
+    public static async takeTurnsIn(game: Game, runner: RunnerType) {
         let winner: boolean = false;
-        do {
+        while(!winner) {
+            const answerIdx = await runner.promptAnswer(0, 4, "answer");
+            // exit the loop on undefined input since this is the end of the answers, keep the game running in the process
+            if (!answerIdx) {
+                break;
+            }
             // checking to determine if they should or should not be removed from penalty box, more than just a bool check
             if (!game.checkPenaltyBox(Math.floor(Math.random() * 10))) {
                 // asking the question, and then also determining if they answered correctly or not; also violates SRP
                 game.askQuestion();
 
-                const answerIdx = await runner.promptAnswer(0, 4, "answer");
 
                 console.log("ANSWER: ", answerIdx)
                 if (+answerIdx === 3) {
@@ -77,8 +99,7 @@ export class GameRunner {
             if (!winner) {
                 game.rotatePlayer()
             }
-        } while (!winner);
-        return;
+        };
     }
 }
 
