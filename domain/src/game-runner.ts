@@ -57,8 +57,6 @@ export class GameRunner {
                              } | typeof gamePrompter = gamePrompter ): Promise<([RunnerType, Game])>{
         const game = new Game(consoleWrapper);
 
-        console.log(runner)
-
         return [runner, game];
     }
 

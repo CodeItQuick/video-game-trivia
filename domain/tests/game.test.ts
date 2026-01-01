@@ -33,7 +33,11 @@ describe('The test environment', () => {
         runner.numPlayers = [3];
         runner.answers = [4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
 
-        await GameRunner.main(consoleWrapper, runner);
+        const [gameRunner, game] = await GameRunner.main(consoleWrapper, runner);
+        await GameRunner.createNewGame(gameRunner, game);
+        for (let i = 0; i < runner.answers.length; i++) {
+            await GameRunner.takeTurnsIn(game, gameRunner);
+        }
 
         const messages = consoleWrapper.getMessages()
         expect(consoleWrapper.getMessages()[messages.length - 1]).to.include("now has 6 Gold Coins.")
