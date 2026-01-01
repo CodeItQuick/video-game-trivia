@@ -8,8 +8,10 @@ const gameInstance = ref(false);
 const playersAdded = ref(false);
 const gameOver = ref(false);
 
+const hostAddress = process.env === 'dev' ? 'http://localhost:5187': '';
+
 const requestNewInstance = async () => {
-  const gameInstanceResponse = await fetch("/api/").then(x => x.json())
+  const gameInstanceResponse = await fetch(`${hostAddress}/api/`).then(x => x.json())
   playersAdded.value = false;
   gameOver.value = false;
   console.log(gameInstanceResponse)

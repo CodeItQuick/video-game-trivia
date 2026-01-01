@@ -7,8 +7,9 @@ const FastifyStatic = require('@fastify/static');
 const fastify = Fastify({
     logger: true
 })
+const originHost = process.env === 'dev' ? 'http://localhost': 'https://video-game-trivia-codeitquicks-projects.vercel.app/'
 fastify.register(cors, {
-    origin: "https://video-game-trivia-codeitquicks-projects.vercel.app/"
+    origin: originHost
 })
 
 // Determine the absolute path to your 'dist' folder
